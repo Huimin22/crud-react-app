@@ -1,0 +1,33 @@
+version: '3'
+services:
+  frontend:
+    build:
+     context: ./frontend
+     dockerfile: Dockerfile
+  backend:
+    build:
+     context: ./backend
+     dockerfile: Dockerfile
+    depends_on:
+      - mysql
+  mysql:
+    image: mysql:5.7.39
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --lower_case_table_names=1
+    restart: always
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql@2025
+      MYSQL_DATABASE: test
+    volumes:
+      - ./mysql:/var/lib/mysql
+      - ./mysql-initdb:/docker-entrypoint-initdb.d
+  proxy:
+    image: nginx
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - frontend
+      - backend
