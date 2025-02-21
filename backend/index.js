@@ -6,12 +6,9 @@ const app = express();
 
 const db = mysql.createConnection({
     host: "mysql",
-    port: 3306,
     user: "root",
     password: "mysql@2025",
-    database: "test",
-    debug: true,
-    useConnectionPooling: true
+    database: "test"
 })
 
 app.use(express.json())//return json data using the api server postman

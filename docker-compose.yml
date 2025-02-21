@@ -1,31 +1,47 @@
 services:
   frontend:
     build:
-     context: ./frontend
-     dockerfile: Dockerfile
-  backend:
-    build:
-     context: ./backend
-     dockerfile: Dockerfile
-    depends_on:
-      - mysql
-  mysql:
-    image: bitnami/mysql:5.7.43
-    restart: always
+      context: ./frontend
+    container_name: frontend-container
     ports:
-      - "3307:3306"
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_started
+    networks:
+      - myapp-network
+
+  db:
+    image: mysql:8.0
+    container_name: mysql-container
+    hostname: db
     environment:
       MYSQL_ROOT_PASSWORD: mysql@2025
       MYSQL_DATABASE: test
-    volumes:
-      - ./mysql:/bitnami/mysql/data
-      - ./mysql-initdb:/docker-entrypoint-initdb.d
-  proxy:
-    image: nginx
     ports:
-      - "8080:8080"
+      - "3306:3306"
     volumes:
-      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+      - ./mysql-initdb:/docker-entrypoint-initdb.d
+    networks:
+      - myapp-network
+
+  backend:
+    build:
+      context: ./backend
+    container_name: backend-container
+    environment:
+      - DB_HOST=mysql
+      - DB_USER=root
+      - DB_PASSWORD=mysql@2025
+      - DB_NAME=test
+    ports:
+      - "8800:8800"
     depends_on:
-      - frontend
-      - backend
+      db:
+        condition: service_healthy
+    networks:
+      - myapp-network
+
+networks:
+  myapp-network:
+    driver: bridge
