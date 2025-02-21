@@ -24,12 +24,6 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - myapp-network
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "--host=mysql", "--user=root", "--password=mysql@2025"]
-      interval: 10s
-      retries: 5
-      start_period: 30s
-      timeout: 10s
 
   backend:
     build:
@@ -43,8 +37,7 @@ services:
     ports:
       - "8800:8800"
     depends_on:
-      db:
-        condition: service_healthy
+      - db
     networks:
       - myapp-network
 
