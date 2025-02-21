@@ -21,9 +21,15 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./mysql-initdb:/docker-entrypoint-initdb.d
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - myapp-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "--host=mysql", "--user=root", "--password=mysql@2025"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
 
   backend:
     build:
