@@ -1,16 +1,4 @@
 services:
-  frontend:
-    build:
-      context: ./frontend
-    container_name: frontend-container
-    ports:
-      - "3000:80"
-    depends_on:
-      backend:
-        condition: service_started
-    networks:
-      - myapp-network
-
   db:
     image: mysql:8.0
     container_name: mysql-container
@@ -38,6 +26,18 @@ services:
       - "8800:8800"
     depends_on:
       - db
+    networks:
+      - myapp-network
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend-container
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_started
     networks:
       - myapp-network
 
