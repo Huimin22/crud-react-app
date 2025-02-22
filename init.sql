@@ -1,3 +1,7 @@
+CREATE DATABASE IF NOT EXISTS test;
+
+USE test;
+
 CREATE TABLE `books` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `title` varchar(255) NOT NULL DEFAULT '',

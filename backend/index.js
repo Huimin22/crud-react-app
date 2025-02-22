@@ -1,15 +1,23 @@
 import express  from "express";
-import mysql from "mysql"
+import mysql from "mysql2"
 import cors from "cors"
 
 const app = express();
 
 const db = mysql.createConnection({
-    host: "mysql",
+    host: "db",
     user: "root",
     password: "mysql@2025",
     database: "test"
 })
+
+db.connect((err) => {
+    if (err) {
+        console.log("Error connecting to MySQL:", err);
+        return;
+    }
+    console.log("Connected to MySQL database!");
+});
 
 app.use(express.json())//return json data using the api server postman
 
@@ -19,7 +27,7 @@ app.get("/", (req,res)=>{
     res.json("Hello World from the backend!!!")
 })
 
-//postman -> get method  http://localhost:8080/books
+//postman -> get method  http://localhost:8800/books
 app.get("/books", (req,res)=>{
     const query = "SELECT * FROM books"
     db.query(query, (err,data)=>{
